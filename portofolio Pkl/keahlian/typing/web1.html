@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Master - Test Kecepatan Ketik</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.7);
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Text Area */
+        .text-container {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            min-height: 200px;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .text-container:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .text-display {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-wrap;
+            margin-bottom: 1rem;
+            min-height: 120px;
+        }
+
+        .text-word {
+            margin-right: 0.5rem;
+            padding: 0.2rem 0.3rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .text-word.current {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .text-word.correct {
+            background: rgba(40, 167, 69, 0.2);
+        }
+
+        .text-word.incorrect {
+            background: rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        #textInput {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.3rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            outline: none;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        #textInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Buttons */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-3px);
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .leaderboard h3 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items:  center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateX(10px);
+        }
+
+        .leader-rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .leader-score {
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">⌨️ Typing Master</h1>
+            <p>Test kecepatan dan akurasi ketik kamu!</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="wpm">0</div>
+                <div class="stat-label">WPM</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">Akurasi</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="errors">0</div>
+                <div class="stat-label">Kesalahan</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="timeLeft">60</div>
+                <div class="stat-label">Detik</div>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Text Area -->
+        <div class="text-container" id="textContainer">
+            <div class="text-display" id="textDisplay">
+                Klik "START" untuk memulai test. Ketik teks yang muncul di bawah ini secepat dan seakurat mungkin!
+            </div>
+            <div class="input-container">
+                <input type="text" id="textInput" placeholder="Mulai ketik di sini..." disabled>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <button class="btn btn-primary" id="startBtn">🚀 START</button>
+            <button class="btn btn-secondary" id="resetBtn" disabled>🔄 Reset</button>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <h3>🏆 Leaderboard Terbaik</h3>
+            <div class="leaderboard-list" id="leaderboardList">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const words = [
+            "programming", "javascript", "developer", "website", "computer", "keyboard", "internet", "algorithm",
+            "responsive", "framework", "database", "frontend", "backend", "animation", "performance", "security",
+            "deployment", "versioning", "debugging", "optimization", "scalability", "microservices", "containerization",
+            "devops", "cloudcomputing", "machinelearning", "artificialintelligence", "blockchain", "cryptocurrency"
+        ];
+
+        let currentTest = {
+            words: [],
+            wordIndex: 0,
+            charIndex: 0,
+            startTime: null,
+            errors: 0,
+            timeLeft: 60,
+            timer: null,
+            isRunning: false
+        };
+
+        const elements = {
+            textDisplay: document.getElementById('textDisplay'),
+            textInput: document.getElementById('textInput'),
+            startBtn: document.getElementById('startBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            wpm: document.getElementById('wpm'),
+            accuracy: document.getElementById('accuracy'),
+            errors: document.getElementById('errors'),
+            timeLeft: document.getElementById('timeLeft'),
+            progressFill: document.getElementById('progressFill'),
+            leaderboardList: document.getElementById('leaderboardList')
+        };
+
+        // Generate random test
+        function generateTest() {
+            currentTest.words = [];
+            const wordCount = 200;
+            for (let i = 0; i < wordCount; i++) {
+                currentTest.words.push(words[Math.floor(Math.random() * words.length)]);
+            }
+            currentTest.wordIndex = 0;
+            currentTest.charIndex = 0;
+            displayText();
+        }
+
+        // Display text with highlighting
+        function displayText() {
+            let html = '';
+            for (let i = 0; i < currentTest.words.length; i++) {
+                const word = currentTest.words[i];
+                let wordClass = '';
+                
+                if (i < currentTest.wordIndex) {
+                    wordClass = 'correct';
+                } else if (i === currentTest.wordIndex) {
+                    wordClass = 'current';
+                }
+                
+                html += `<span class="text-word ${wordClass}">${word}</span>`;
+            }
+            elements.textDisplay.innerHTML = html;
+        }
+
+        // Update stats
+        function updateStats() {
+            const elapsed = (Date.now() - currentTest.startTime) / 1000 / 60; // minutes
+            const correctWords = currentTest.wordIndex;
+            const wpm = Math.round(correctWords / elapsed);
+            const totalChars = currentTest.words.slice(0, currentTest.wordIndex).join(' ').length;
+            const accuracy = Math.round((totalChars - currentTest.errors) / totalChars * 100) || 0;
+
+            elements.wpm.textContent = isFinite(wpm) ? wpm : 0;
+            elements.accuracy.textContent = accuracy + '%';
+            elements.errors.textContent = currentTest.errors;
+            elements.timeLeft.textContent = Math.ceil(currentTest.timeLeft);
+            
+            const progress = (currentTest.wordIndex / currentTest.words.length) * 100;
+            elements.progressFill.style.width = progress + '%';
+        }
+
+        // Input handler
+        elements.textInput.addEventListener('input', (e) => {
+            const typedWord = e.target.value.trim();
+            const currentWord = currentTest.words[currentTest.wordIndex];
+
+            if (typedWord === currentWord) {
+                // Correct word
+                currentTest.wordIndex++;
+                currentTest.charIndex = 0;
+                e.target.value = '';
+                displayText();
+                
+                if (currentTest.wordIndex >= currentTest.words.length) {
+                    testComplete();
+                    return;
+                }
+            } else {
+                // Check character by character
+                if (typedWord.length > currentWord.length) {
+                    e.target.value = currentWord;
+                    return;
+                }
+                
+                if (typedWord[currentWord.length - 1] !== currentWord[currentWord.length - 1]) {
+                    currentTest.errors++;
+                }
+            }
+            
+            updateStats();
+        });
+
+        // Timer
+        function startTimer() {
+            currentTest.timer = setInterval(() => {
+                currentTest.timeLeft--;
+                updateStats();
+                
+                if (currentTest.timeLeft <= 0) {
+                    testComplete();
+                }
+            }, 1000);
+        }
+
+        // Test complete
+        function testComplete() {
+            clearInterval(currentTest.timer);
+            elements.textInput.disabled = true;
+            elements.startBtn.textContent = '🎉 Ulangi Test';
+            elements.startBtn.disabled = false;
+            elements.resetBtn.disabled = false;
+            
+            // Save to leaderboard
+            saveScore();
+            showLeaderboard();
+        }
+
+        // Start test
+        elements.startBtn.addEventListener('click', () => {
+            if (!currentTest.isRunning) {
+                currentTest.isRunning = true;
+                generateTest();
+                currentTest.startTime = Date.now();
+                currentTest.errors = 0;
+                currentTest.timeLeft = 60;
+                elements.textInput.disabled = false;
+                elements.textInput.focus();
+                elements.startBtn.disabled = true;
+                elements.resetBtn.disabled = false;
+                startTimer();
+                updateStats();
+            } else {
+                resetTest();
+            }
+        });
+
+        // Reset
+        elements.resetBtn.addEventListener('click', resetTest);
+
+        function resetTest() {
+            clearInterval(currentTest.timer);
+            currentTest.isRunning = false;
+            elements.textInput.value = '';
+            elements.textInput.disabled = true;
+            elements.startBtn.textContent = '🚀 START';
+            elements.startBtn.disabled = false;
+            elements.resetBtn.disabled = true;
+            updateStats();
+        }
+
+        // Leaderboard
+        function saveScore() {
+            const scores = JSON.parse(localStorage.getItem('typingScores') || '[]');
+            const wpm = parseInt(elements.wpm.textContent);
+            scores.push({
+                wpm: wpm,
+                accuracy: parseInt(elements.accuracy.textContent),
+                date: new Date().toLocaleDateString('id-ID')
+            });
+            
+            // Sort and keep top 10
+            scores.sort((a, b) => b.wpm - a.wpm);
+            localStorage.setItem('typingScores', JSON.stringify(scores.slice(0, 10)));
+        }
+
+        function showLeaderboard() {
+            const scores = JSON.parse(localStorage.getItem('typingScores') || '[]');
+            elements.leaderboardList.innerHTML = '';
+            
+            scores.forEach((score, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                item.innerHTML = `
+                    <span class="leader-rank">#${index + 1}</span>
+                    <span class="leader-score">${score.wpm} WPM | ${score.accuracy}%</span>
+                    <small>${score.date}</small>
+                `;
+                elements.leaderboardList.appendChild(item);
+            });
+        }
+
+        // Initialize
+        showLeaderboard();
+        elements.textInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') e.preventDefault();
+        });
+
+        // Focus on container click
+        document.getElementById('textContainer').addEventListener('click', () => {
+            if (!elements.textInput.disabled) {
+                elements.textInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>

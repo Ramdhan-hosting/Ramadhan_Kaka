@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Wisata Malang</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI';
+  color: white;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a, #0ea5e9);
+}
+
+header {
+  text-align: center;
+  padding: 30px;
+  font-size: 30px;
+}
+
+/* CAROUSEL */
+.carousel {
+  width: 90%;
+  margin: auto;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.slides {
+  display: flex;
+  transition: 0.5s;
+}
+
+.slides img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+/* SEARCH */
+.container {
+  text-align: center;
+  margin: 20px;
+}
+
+input, textarea {
+  padding: 10px;
+  width: 250px;
+  border-radius: 10px;
+  border: none;
+  margin: 5px;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* CARD */
+.card {
+  background: rgba(0,0,0,0.5);
+  border-radius: 15px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.content {
+  padding: 15px;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #38bdf8;
+  cursor: pointer;
+}
+
+/* FORM */
+.form {
+  text-align: center;
+  padding: 30px;
+  background: rgba(0,0,0,0.4);
+}
+</style>
+</head>
+
+<body>
+
+<header>🌄 Wisata Malang</header>
+
+<!-- CAROUSEL -->
+<div class="carousel">
+  <div class="slides" id="slides">
+    <img src="img/bromo.jpg">
+    <img src="img/balekambang.jpg">
+    <img src="img/cobanrondo.jpg">
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="container">
+  <input type="text" id="search" placeholder="Cari wisata...">
+</div>
+
+<!-- LIST -->
+<div class="grid" id="list"></div>
+
+<!-- FORM TAMBAH -->
+<div class="form">
+  <h2>Tambah Wisata</h2>
+  <input type="text" id="name" placeholder="Nama wisata"><br>
+  <textarea id="desc" placeholder="Deskripsi"></textarea><br>
+  <input type="text" id="link" placeholder="Link website"><br>
+  <input type="file" id="image"><br>
+  <button onclick="tambahWisata()">Tambah</button>
+</div>
+
+<script>
+
+let data = [
+  {name:"Gunung Bromo", desc:"Sunrise terbaik di Indonesia.", img:"img/bromo.jpg", link:"https://id.wikipedia.org/wiki/Gunung_Bromo"},
+  {name:"Jatim Park 1", desc:"Wisata edukasi dan permainan.", img:"img/jatimpark.jpg", link:"https://jtp.id"},
+  {name:"Jatim Park 2", desc:"Batu Secret Zoo & Museum Satwa.", img:"img/jatimpark2.jpg", link:"https://jtp.id"},
+  {name:"Pantai Balekambang", desc:"Pantai dengan pura di atas batu.", img:"img/balekambang.jpg", link:"https://id.wikipedia.org/wiki/Pantai_Balekambang"},
+  {name:"Coban Rondo", desc:"Air terjun sejuk dan alami.", img:"img/cobanrondo.jpg", link:"https://id.wikipedia.org/wiki/Coban_Rondo"},
+  {name:"Museum Angkut", desc:"Museum transportasi terbesar.", img:"img/museumangkut.jpg", link:"https://museangkut.com"},
+  {name:"Selecta", desc:"Taman bunga dan kolam renang.", img:"img/selecta.jpg", link:"https://selectawisata.id"},
+  {name:"Paralayang Batu", desc:"Menikmati pemandangan dari atas.", img:"img/paralayang.jpg", link:"https://id.wikipedia.org/wiki/Paralayang_Batu"}
+];
+
+const list = document.getElementById("list");
+
+// render
+function render(items){
+  list.innerHTML = "";
+
+  if(items.length === 0){
+    list.innerHTML = "<p>Tidak ditemukan 😢</p>";
+    return;
+  }
+
+  items.forEach(item => {
+    list.innerHTML += `
+      <div class="card">
+        <img src="${item.img}">
+        <div class="content">
+          <h3>${item.name}</h3>
+          <p>${item.desc}</p>
+          <button onclick="window.open('${item.link}')">Kunjungi</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// search
+document.getElementById("search").addEventListener("input", function(){
+  const value = this.value.toLowerCase();
+
+  const filtered = data.filter(item =>
+    item.name.toLowerCase().includes(value) ||
+    item.desc.toLowerCase().includes(value)
+  );
+
+  render(filtered);
+});
+
+// tambah wisata
+function tambahWisata(){
+  const name = document.getElementById("name").value;
+  const desc = document.getElementById("desc").value;
+  const link = document.getElementById("link").value;
+  const file = document.getElementById("image").files[0];
+
+  if(!name || !desc || !file){
+    alert("Isi semua dulu!");
+    return;
+  }
+
+  const imgURL = URL.createObjectURL(file);
+
+  data.push({
+    name: name,
+    desc: desc,
+    img: imgURL,
+    link: link
+  });
+
+  render(data);
+}
+
+// carousel
+let index = 0;
+const slides = document.getElementById("slides");
+
+setInterval(() => {
+  index++;
+  if(index > 2) index = 0;
+  slides.style.transform = `translateX(-${index * 100}%)`;
+}, 3000);
+
+// awal
+render(data);
+
+</script>
+
+</body>
+</html>

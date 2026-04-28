@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Portofolio Web Saya</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI';
+  background: #020617;
+  color: white;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 50px 20px;
+  background: linear-gradient(135deg, #020617, #0f172a, #1e3a8a);
+}
+
+.hero img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 4px solid #38bdf8;
+  object-fit: cover;
+}
+
+.hero h1 {
+  margin-top: 15px;
+}
+
+.hero p {
+  color: #94a3b8;
+}
+
+/* GRID */
+.container {
+  padding: 30px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.card {
+  background: #0f172a;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.content {
+  padding: 15px;
+}
+
+.content p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* BUTTON */
+button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #38bdf8;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <img src="img/foto.jpeg">
+  <h1>Portofolio Web Saya</h1>
+  <p>Berikut adalah beberapa project website yang telah saya buat</p>
+</div>
+
+<!-- PROJECT -->
+<div class="container">
+  <div class="grid" id="list"></div>
+</div>
+
+<script>
+
+const data = [
+  {
+    name: "Website BMI",
+    desc: "Website untuk menghitung berat badan ideal.",
+    img: "healt/assets/image/3.jpeg",
+    link: "healt/healt.html"
+  },
+  {
+    name: "Website Quiz",
+    desc: "Website Untuk Melatih Pengatauhan.",
+    img: "img/quiz.avif",
+    link: "iq/web2.html"
+  },
+  {
+    name: "Website Typing",
+    desc: "Website untuk Melatih Mengetik.",
+    img: "img/typing.jpg",
+    link: "typing/web1.html"
+  },
+  {
+    name: "Website Self Grow",
+    desc: "Platform untuk Menjadi Lebih Baik.",
+    img: "img/brain.jpg",
+    link: "self-growth/index.html"
+  },
+  {
+    name: "Website Angkasa",
+    desc: "Platform untuk Explor Angkasa.",
+    img: "img/angkasa.jpg",
+    link: "angkasa/index.html"
+  },
+  {
+    name: "Website Tecnologi",
+    desc: "Platform Pengetauhan Teknologi.",
+    img: "img/tecnologi.jpg",
+    link: "mengenal-teknologi/index.html"
+  },
+  {
+    name: "Website Wisata.",
+    desc: "Website Wisata Malang.",
+    img: "wisata/img/bromo.jpg",
+    link: "wisata/index.html"
+  },
+  {
+    name: "Website Game Construct",
+    desc: "Game Di Buat Dengan Construct Maaaf Masih ada BUG.",
+    img: "img/construct.jpg",
+    link: "https://constructkaka.netlify.app/"
+  }
+];
+
+const list = document.getElementById("list");
+
+function render(){
+  list.innerHTML = "";
+
+  data.forEach(item => {
+    list.innerHTML += `
+      <div class="card">
+        <img src="${item.img}">
+        <div class="content">
+          <h3>${item.name}</h3>
+          <p>${item.desc}</p>
+          <button onclick="window.open('${item.link}')">Lihat Web</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>
